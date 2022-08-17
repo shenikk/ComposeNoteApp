@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
-import com.composenoteapp.models.NoteItemModel
 import com.composenoteapp.presentation.screens.Navigation
 import com.composenoteapp.ui.theme.ComposeNoteAppTheme
 
@@ -27,11 +25,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-// TODO it's a mock. Delete it later
-val list = listOf(
-    NoteItemModel(title = "First Title", content = "bla bla bla bla bla bla bla bla bla bla bla bla",
-    NoteItemModel.noteColor.random().toArgb()),
-    NoteItemModel(title = "Second Title", content = "bla bla bla", NoteItemModel.noteColor.random().toArgb()),
-    NoteItemModel(title = "Third Title", content = "bla bla bla", NoteItemModel.noteColor.random().toArgb())
-)
