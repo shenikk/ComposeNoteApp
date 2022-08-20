@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import com.composenoteapp.models.NoteItemModel
-import com.composenoteapp.presentation.NoteScreenState
+import com.composenoteapp.presentation.screens.NoteScreenState
 
 class NoteScreenViewModel : ViewModel() {
 

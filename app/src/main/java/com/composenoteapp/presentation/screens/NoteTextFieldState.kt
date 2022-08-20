@@ -1,4 +1,4 @@
-package com.composenoteapp.presentation
+package com.composenoteapp.presentation.screens
 
 data class NoteTextFieldState(
     val text: String = "",
