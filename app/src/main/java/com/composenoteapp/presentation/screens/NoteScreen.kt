@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.composenoteapp.models.NoteEntity
-import com.composenoteapp.presentation.NoteItem
+import com.composenoteapp.presentation.components.NoteItem
 import com.composenoteapp.presentation.viewmodel.NoteEvent
 import com.composenoteapp.presentation.viewmodel.NoteScreenViewModel
 import kotlinx.coroutines.launch

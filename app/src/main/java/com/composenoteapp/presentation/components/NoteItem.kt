@@ -1,11 +1,15 @@
-package com.composenoteapp.presentation
+package com.composenoteapp.presentation.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -31,7 +35,12 @@ fun NoteItem(
     Box(
         modifier = modifier
     ) {
-        Canvas(modifier = Modifier.matchParentSize().clickable { onDeleteClick.invoke() }) {
+        Canvas(
+            modifier = Modifier
+                .matchParentSize()
+//            .clickable { onDeleteClick.invoke() }
+        )
+        {
             val clipPath = Path().apply {
                 lineTo(size.width - cutCornerSize.toPx(), 0f)
                 lineTo(size.width, cutCornerSize.toPx())
@@ -50,13 +59,13 @@ fun NoteItem(
                     color = Color(
                         ColorUtils.blendARGB(noteColor, 0x000000, 0.2f)
                     ),
-                    topLeft = Offset(size.width - cutCornerSize.toPx(), - 100f),
+                    topLeft = Offset(size.width - cutCornerSize.toPx(), -100f),
                     size = Size(cutCornerSize.toPx() + 100f, cutCornerSize.toPx() + 100f),
                     cornerRadius = CornerRadius(cornerRadius.toPx())
                 )
             }
         }
-        
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,6 +87,12 @@ fun NoteItem(
                 maxLines = 10,
                 overflow = TextOverflow.Ellipsis
             )
+        }
+        IconButton(
+            onClick = onDeleteClick,
+            modifier = Modifier.align(Alignment.BottomEnd)
+        ) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete note")
         }
     }
 }
