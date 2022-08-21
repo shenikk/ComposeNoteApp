@@ -1,5 +1,6 @@
 package com.composenoteapp.presentation.screens
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.composenoteapp.R
 import com.composenoteapp.models.NoteEntity
 import com.composenoteapp.presentation.components.NoteItem
 import com.composenoteapp.presentation.viewmodel.NoteEvent
@@ -28,11 +31,12 @@ fun NoteScreen(
     viewModel: NoteScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.noteState.value
+    val context = LocalContext.current
 
     if (state.notes.isNotEmpty()) {
-        ContentScreen(navController, state.notes, viewModel)
+        ContentScreen(navController, state.notes, viewModel, context)
     } else {
-        EmptyScreen(navController)
+        EmptyScreen(navController, context)
     }
 }
 
@@ -40,12 +44,13 @@ fun NoteScreen(
 private fun ContentScreen(
     navController: NavController,
     notes: List<NoteEntity>,
-    viewModel: NoteScreenViewModel
+    viewModel: NoteScreenViewModel,
+    context: Context
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
-    Scaffold(floatingActionButton = { NoteFloatingActionButton(navController) }) {
+    Scaffold(floatingActionButton = { NoteFloatingActionButton(navController, context) }) {
         LazyColumn {
             items(notes) { note ->
                 Spacer(modifier = Modifier.height(16.dp))
@@ -62,8 +67,8 @@ private fun ContentScreen(
                         viewModel.onEvent(NoteEvent.DeleteEvent(note))
                         scope.launch {
                             val result = scaffoldState.snackbarHostState.showSnackbar(
-                                message = "Note deleted",
-                                actionLabel = "Undo"
+                                message = context.getString(R.string.delete_note),
+                                actionLabel = context.getString(R.string.undo)
                             )
                             if (result == SnackbarResult.ActionPerformed) {
                                 viewModel.onEvent(NoteEvent.RestoreEvent)
@@ -77,8 +82,8 @@ private fun ContentScreen(
 }
 
 @Composable
-private fun EmptyScreen(navController: NavController) {
-    Scaffold(floatingActionButton = { NoteFloatingActionButton(navController) }) {
+private fun EmptyScreen(navController: NavController, context: Context) {
+    Scaffold(floatingActionButton = { NoteFloatingActionButton(navController, context) }) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -86,7 +91,7 @@ private fun EmptyScreen(navController: NavController) {
                 .fillMaxWidth()
         ) {
             Text(
-                "Add your first note",
+                context.getString(R.string.add_first_note),
                 Modifier.padding(16.dp),
                 textAlign = TextAlign.Center,
                 style = typography.h5,
@@ -96,8 +101,8 @@ private fun EmptyScreen(navController: NavController) {
 }
 
 @Composable
-fun NoteFloatingActionButton(navController: NavController) {
+fun NoteFloatingActionButton(navController: NavController, context: Context) {
     FloatingActionButton(onClick = { navController.navigate(Screen.EditNoteScreen.route) }) {
-        Icon(Icons.Filled.Add, "Add a note")
+        Icon(Icons.Filled.Add, context.getString(R.string.add_note))
     }
 }

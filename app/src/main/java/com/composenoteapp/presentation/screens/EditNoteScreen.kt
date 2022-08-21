@@ -12,9 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.composenoteapp.R
 import com.composenoteapp.presentation.components.TransparentHintTextField
 import com.composenoteapp.presentation.viewmodel.EditNoteEvent
 import com.composenoteapp.presentation.viewmodel.EditNoteScreenViewModel
@@ -98,12 +100,13 @@ fun EditNoteScreen(
 @Composable
 fun EditNoteFloatingActionButton(viewModel: EditNoteScreenViewModel) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     FloatingActionButton(onClick = {
         scope.launch {
             viewModel.onEvent(EditNoteEvent.SaveNote)
         }
     }) {
-        Icon(Icons.Default.Save, "Add a note")
+        Icon(Icons.Default.Save, context.getString(R.string.add_note))
     }
 }

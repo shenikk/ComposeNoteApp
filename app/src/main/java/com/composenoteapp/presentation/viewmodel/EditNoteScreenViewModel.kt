@@ -22,6 +22,7 @@ class EditNoteScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _noteTitle = mutableStateOf(
+        // TODO find the way to get string value from resources
         NoteTextFieldState(hint = "Enter title...")
     )
     val noteTitle: State<NoteTextFieldState> = _noteTitle
