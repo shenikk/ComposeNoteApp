@@ -2,52 +2,64 @@ package com.composenoteapp.presentation.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
-import com.composenoteapp.models.NoteItemModel
+import androidx.lifecycle.viewModelScope
+import com.composenoteapp.domain.NoteInteractor
+import com.composenoteapp.models.NoteEntity
 import com.composenoteapp.presentation.screens.NoteScreenState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NoteScreenViewModel : ViewModel() {
+@HiltViewModel
+class NoteScreenViewModel @Inject constructor(
+    private val noteInteractor: NoteInteractor
+) : ViewModel() {
 
     private val _noteState = mutableStateOf(NoteScreenState())
     val noteState: State<NoteScreenState> = _noteState
 
+    private var getNotesJob: Job? = null
+
+    private var recentlyDeletedNote: NoteEntity? = null
+
     init {
-        _noteState.value = NoteScreenState(getNotes())
+        getNotes()
     }
 
     fun onEvent(event: NoteEvent) {
         when (event) {
-            is NoteEvent.AddEvent -> {
-                //TODO
+            is NoteEvent.GetNotesEvent -> {
+                viewModelScope.launch {
+                    noteInteractor.getNotes()
+                }
             }
             is NoteEvent.DeleteEvent -> {
-                //TODO
+                viewModelScope.launch {
+                    noteInteractor.deleteNote(event.noteEntity)
+                    recentlyDeletedNote = event.noteEntity
+                }
             }
             is NoteEvent.RestoreEvent -> {
-                //TODO
+                viewModelScope.launch {
+                    noteInteractor.addNote(recentlyDeletedNote ?: return@launch)
+                    recentlyDeletedNote = null
+                }
             }
         }
     }
 
-    private fun getNotes(): List<NoteItemModel> {
-        // TODO it's a mock. Delete it later
-        return listOf(
-            NoteItemModel(
-                title = "First Title", content = "bla bla bla bla bla bla bla bla bla bla bla bla",
-                NoteItemModel.noteColor.random().toArgb()
-            ),
-            NoteItemModel(
-                title = "Second Title",
-                content = "bla bla bla",
-                NoteItemModel.noteColor.random().toArgb()
-            ),
-            NoteItemModel(
-                title = "Third Title",
-                content = "bla bla bla",
-                NoteItemModel.noteColor.random().toArgb()
-            )
-        )
-//        return emptyList()
+    private fun getNotes() {
+        getNotesJob?.cancel()
+        getNotesJob = noteInteractor.getNotes()
+            .onEach { notes ->
+                _noteState.value = noteState.value.copy(
+                    notes = notes
+                )
+            }
+            .launchIn(viewModelScope)
     }
 }

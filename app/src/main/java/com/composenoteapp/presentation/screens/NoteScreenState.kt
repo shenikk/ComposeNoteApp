@@ -1,7 +1,7 @@
 package com.composenoteapp.presentation.screens
 
-import com.composenoteapp.models.NoteItemModel
+import com.composenoteapp.models.NoteEntity
 
 data class NoteScreenState(
-    val notes: List<NoteItemModel> = emptyList()
+    val notes: List<NoteEntity> = emptyList()
 )

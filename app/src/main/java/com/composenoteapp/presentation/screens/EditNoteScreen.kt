@@ -1,28 +1,48 @@
 package com.composenoteapp.presentation.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.composenoteapp.presentation.components.TransparentHintTextField
 import com.composenoteapp.presentation.viewmodel.EditNoteEvent
 import com.composenoteapp.presentation.viewmodel.EditNoteScreenViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditNoteScreen(navController: NavController) {
-    val viewModel: EditNoteScreenViewModel = viewModel()
+fun EditNoteScreen(
+    navController: NavController,
+    viewModel: EditNoteScreenViewModel = hiltViewModel()
+) {
     val noteTitleState = viewModel.noteTitle.value
     val noteContentState = viewModel.noteContent.value
+    val scaffoldState = rememberScaffoldState()
 
-    Scaffold(floatingActionButton = { EditNoteFloatingActionButton(navController) }) {
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is EditNoteScreenViewModel.UiEvent.ShowSnackBar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.message
+                    )
+                }
+                is EditNoteScreenViewModel.UiEvent.SaveNote -> {
+                    navController.navigateUp()
+                }
+            }
+        }
+    }
+
+    Scaffold(floatingActionButton = { EditNoteFloatingActionButton(viewModel) }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,11 +85,13 @@ fun EditNoteScreen(navController: NavController) {
 }
 
 @Composable
-fun EditNoteFloatingActionButton(navController: NavController) {
-    val context = LocalContext.current
+fun EditNoteFloatingActionButton(viewModel: EditNoteScreenViewModel) {
+    val scope = rememberCoroutineScope()
+
     FloatingActionButton(onClick = {
-        navController.popBackStack()
-        Toast.makeText(context, "Note saved", Toast.LENGTH_SHORT).show()
+        scope.launch {
+            viewModel.onEvent(EditNoteEvent.SaveNote)
+        }
     }) {
         Icon(Icons.Filled.Create, "Add a note")
     }
