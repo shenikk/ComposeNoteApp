@@ -1,6 +1,7 @@
 package com.composenoteapp.presentation
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -24,12 +25,13 @@ fun NoteItem(
     cutCornerSize: Dp = 30.dp,
     noteTitle: String,
     noteContent: String,
-    noteColor: Int
+    noteColor: Int,
+    onDeleteClick: () -> Unit
 ) {
     Box(
         modifier = modifier
     ) {
-        Canvas(modifier = Modifier.matchParentSize()) {
+        Canvas(modifier = Modifier.matchParentSize().clickable { onDeleteClick.invoke() }) {
             val clipPath = Path().apply {
                 lineTo(size.width - cutCornerSize.toPx(), 0f)
                 lineTo(size.width, cutCornerSize.toPx())
