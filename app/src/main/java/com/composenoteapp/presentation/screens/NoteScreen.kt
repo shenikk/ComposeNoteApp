@@ -37,7 +37,11 @@ fun NoteScreen(
 }
 
 @Composable
-private fun ContentScreen(navController: NavController, notes: List<NoteEntity>, viewModel: NoteScreenViewModel) {
+private fun ContentScreen(
+    navController: NavController,
+    notes: List<NoteEntity>,
+    viewModel: NoteScreenViewModel
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -52,7 +56,7 @@ private fun ContentScreen(navController: NavController, notes: List<NoteEntity>,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                                   navController.navigate(Screen.EditNoteScreen.route + "?noteId=${note.id}")
+                            navController.navigate(Screen.EditNoteScreen.route + "?noteId=${note.id}&noteColor=${note.color}")
                         },
                     onDeleteClick = {
                         viewModel.onEvent(NoteEvent.DeleteEvent(note))
@@ -66,7 +70,7 @@ private fun ContentScreen(navController: NavController, notes: List<NoteEntity>,
                             }
                         }
                     }
-                    )
+                )
             }
         }
     }

@@ -1,13 +1,17 @@
 package com.composenoteapp.presentation.screens
 
+import androidx.compose.animation.Animatable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -20,12 +24,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditNoteScreen(
     navController: NavController,
+    noteColor: Int,
     viewModel: EditNoteScreenViewModel = hiltViewModel()
 ) {
     val noteTitleState = viewModel.noteTitle.value
     val noteContentState = viewModel.noteContent.value
     val scaffoldState = rememberScaffoldState()
 
+    val noteBackgroundAnimatable = remember {
+        Animatable(
+            Color(if (noteColor != -1) noteColor else viewModel.noteColor.value)
+        )
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -46,6 +56,7 @@ fun EditNoteScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(noteBackgroundAnimatable.value)
                 .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -93,6 +104,6 @@ fun EditNoteFloatingActionButton(viewModel: EditNoteScreenViewModel) {
             viewModel.onEvent(EditNoteEvent.SaveNote)
         }
     }) {
-        Icon(Icons.Filled.Create, "Add a note")
+        Icon(Icons.Default.Save, "Add a note")
     }
 }

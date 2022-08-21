@@ -15,16 +15,23 @@ fun Navigation() {
         composable(route = Screen.NoteScreen.route) {
             NoteScreen(nav)
         }
-        composable(route = Screen.EditNoteScreen.route + "?noteId={noteId}",
-        arguments = listOf(
-            navArgument(
-                name = "noteId"
-            ) {
-                type = NavType.IntType
-                defaultValue = -1
-            }
-        )) {
-            EditNoteScreen(nav)
+        composable(route = Screen.EditNoteScreen.route + "?noteId={noteId}&noteColor={noteColor}",
+            arguments = listOf(
+                navArgument(
+                    name = "noteId"
+                ) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+                navArgument(
+                    name = "noteColor"
+                ) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )) {
+            val color = it.arguments?.getInt("noteColor") ?: -1
+            EditNoteScreen(nav, color)
         }
     }
 }

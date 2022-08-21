@@ -31,6 +31,9 @@ class EditNoteScreenViewModel @Inject constructor(
     )
     val noteContent: State<NoteTextFieldState> = _noteContent
 
+    private val _noteColor = mutableStateOf(NoteEntity.noteColor.random().toArgb())
+    val noteColor: State<Int> = _noteColor
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -85,7 +88,7 @@ class EditNoteScreenViewModel @Inject constructor(
                             NoteEntity(
                                 title = noteTitle.value.text,
                                 content = noteContent.value.text,
-                                color = NoteEntity.noteColor.random().toArgb(),
+                                color = noteColor.value,
                                 timeStamp = System.currentTimeMillis(),
                                 id = currentNoteId
                             )
