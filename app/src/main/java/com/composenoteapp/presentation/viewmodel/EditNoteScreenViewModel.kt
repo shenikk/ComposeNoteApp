@@ -85,16 +85,19 @@ class EditNoteScreenViewModel @Inject constructor(
             is EditNoteEvent.SaveNote -> {
                 viewModelScope.launch {
                     runCatching {
-                        interactor.addNote(
-                            NoteEntity(
-                                title = noteTitle.value.text,
-                                content = noteContent.value.text,
-                                color = noteColor.value,
-                                timeStamp = System.currentTimeMillis(),
-                                id = currentNoteId
-                            )
+                        val note = NoteEntity(
+                            title = noteTitle.value.text,
+                            content = noteContent.value.text,
+                            color = noteColor.value,
+                            timeStamp = System.currentTimeMillis(),
+                            id = currentNoteId
                         )
-                        _eventFlow.emit(UiEvent.SaveNote)
+                        if (checkIsValid(note)) {
+                            saveNote()
+                            _eventFlow.emit(UiEvent.SaveNote)
+                        } else {
+                            _eventFlow.emit(UiEvent.ShowSnackBar("Fields shouldn't be empty!"))
+                        }
                     }.onFailure {
                         _eventFlow.emit(UiEvent.ShowSnackBar(message = "The note wasn't saved"))
                     }
@@ -102,6 +105,21 @@ class EditNoteScreenViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun saveNote() {
+        interactor.addNote(
+            NoteEntity(
+                title = noteTitle.value.text,
+                content = noteContent.value.text,
+                color = noteColor.value,
+                timeStamp = System.currentTimeMillis(),
+                id = currentNoteId
+            )
+        )
+    }
+
+    private fun checkIsValid(note: NoteEntity) =
+        note.title.isNotBlank() && note.content.isNotBlank()
 
     sealed class UiEvent {
         data class ShowSnackBar(val message: String) : UiEvent()

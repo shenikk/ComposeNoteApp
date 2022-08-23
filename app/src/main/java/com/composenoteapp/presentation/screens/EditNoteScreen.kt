@@ -44,7 +44,8 @@ fun EditNoteScreen(
             when (event) {
                 is EditNoteScreenViewModel.UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message
+                        message = event.message,
+                        actionLabel = "Ok"
                     )
                 }
                 is EditNoteScreenViewModel.UiEvent.SaveNote -> {
@@ -54,7 +55,10 @@ fun EditNoteScreen(
         }
     }
 
-    Scaffold(floatingActionButton = { EditNoteFloatingActionButton(viewModel) }) {
+    Scaffold(
+        floatingActionButton = { EditNoteFloatingActionButton(viewModel) },
+        scaffoldState = scaffoldState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
