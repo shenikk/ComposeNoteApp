@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +58,32 @@ fun EditNoteScreen(
 
     Scaffold(
         floatingActionButton = { EditNoteFloatingActionButton(viewModel) },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        topBar = {
+            TopAppBar(
+                backgroundColor = noteBackgroundAnimatable.value,
+                content = {
+                    IconButton(onClick = {
+                        navController.navigateUp()
+                    }) {
+                        Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                    }
+                    TransparentHintTextField(
+                        text = noteTitleState.text,
+                        hint = noteTitleState.hint,
+                        onValueChange = {
+                            viewModel.onEvent(EditNoteEvent.EnteredTitle(it))
+                        },
+                        onFocusChange = {
+                            viewModel.onEvent(EditNoteEvent.ChangeTitleFocus(it))
+                        },
+                        isHintVisible = noteTitleState.isHintVisible,
+                        singleLine = true,
+                        textStyle = MaterialTheme.typography.h5
+                    )
+                }
+            )
+        }
     ) {
         Column(
             modifier = Modifier
@@ -65,23 +91,7 @@ fun EditNoteScreen(
                 .background(noteBackgroundAnimatable.value)
                 .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TransparentHintTextField(
-                text = noteTitleState.text,
-                hint = noteTitleState.hint,
-                onValueChange = {
-                    viewModel.onEvent(EditNoteEvent.EnteredTitle(it))
-                },
-                onFocusChange = {
-                    viewModel.onEvent(EditNoteEvent.ChangeTitleFocus(it))
-                },
-                isHintVisible = noteTitleState.isHintVisible,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.h5
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             TransparentHintTextField(
                 text = noteContentState.text,
